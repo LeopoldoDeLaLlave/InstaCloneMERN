@@ -10,6 +10,8 @@ require('./database');
 
 //Middlewares
 
+app.use(express.json());
+
 const customMiddleware=(req, res, next)=>{
     console.log("middleware");
     next();
@@ -19,9 +21,8 @@ app.use(customMiddleware);
 
 
 //Routes
-app.get('/',(req, res)=>{
-    res.send('Hello world!');
-});
+app.use(require('./routes/auth'));
+
 
 app.get('/about',(req, res)=>{
     res.send('about');
