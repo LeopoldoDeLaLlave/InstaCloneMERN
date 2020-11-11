@@ -1,79 +1,18 @@
-const express = require("express");
-const router = express.Router();
+const { Router } = require("express");
+const router = Router();
 const mongoose = require("mongoose");
-const User = require("../models/user");
-const bcrypt = require('bcryptjs');
 
+const { signInUser, signUpUser } = require('../controllers/users.controllers');
+
+
+router.route('/signin').
+    post(signInUser);
+
+router.route('/signup').
+    post(signUpUser);
 
 router.get('/', (req, res) => {
     res.send('Hello');
 });
 
-//Crear nuevos usuarios
-router.post('/signup', async (req, res) => {
-    const { name, email, password } = req.body;
-
-    //Comprobamos que hay aintroducido todos los datos
-    if (!name || !email || !password) {
-        return res.status(422).json({ "error": "faltan datos" });
-    }
-
-    try {
-
-        //Comprobamos si el mail ya está registrado
-        const savedUser = await User.findOne({ email: email });
-
-        if (savedUser) {
-            return res.status(422).json({ "error": "usuario ya registrado" });
-        }
-        //Protegemos la contraseña
-        hashedPassword = await bcrypt.hash(password, 12);
-        //Creamos el nuevo usuario
-        const user = new User({
-            name,
-            email,
-            password: hashedPassword
-        });
-
-        try {
-            await user.save();
-
-            res.json({ "message": "saved user" });
-        } catch (error) {
-            console.log(error);
-        }
-
-    } catch (error) {
-        console.log(error);
-    }
-
-
-});
-
-//Apertura de sesión de usuarios ya registrados
-router.post('/signin', async (req, res) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
-        return res.status(422).json({ "error": "please add email or password" });
-    }
-
-    try {
-        console.log(email);
-        const savedUser = await User.findOne({ email: email });
-        if (!savedUser) {
-            return res.status(422).json({ "error": "Invalid email or password1" });
-        }
-
-        doMatch = await bcrypt.compare(password, savedUser.password);
-
-        if (doMatch) {
-            res.json({ message: "succesfully signed in" });
-        } else {
-            return res.status(422).json({ "error": "Invalid email or password2" });
-        }
-    } catch (error) {
-        console.log(error);
-    }
-
-})
 module.exports = router;
