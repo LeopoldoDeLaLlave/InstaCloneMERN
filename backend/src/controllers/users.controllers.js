@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const userCtrl = {};
+const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 
@@ -59,13 +60,18 @@ userCtrl.signInUser = async (req, res) => {
         doMatch = await bcrypt.compare(password, savedUser.password);
 
         if (doMatch) {
-            res.json({ message: "succesfully signed in" });
+            const token = jwt.sign({id:savedUser._id}, process.env.JSW_SECRET);
+            res.json({token});
         } else {
             return res.status(422).json({ "error": "Invalid email or password" });
         }
     } catch (error) {
         console.log(error);
     }
+};
+
+userCtrl.accesToProtected = async(req,res)=>{
+    res.send("Hello user");
 };
 
 

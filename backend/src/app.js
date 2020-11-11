@@ -12,12 +12,7 @@ require('./database');
 
 app.use(express.json());
 
-const customMiddleware=(req, res, next)=>{
-    console.log("middleware");
-    next();
-}
 
-app.use(customMiddleware);
 
 
 //Routes
