@@ -50,4 +50,30 @@ router.post('/signup', async (req, res) => {
 
 });
 
+//Apertura de sesión de usuarios ya registrados
+router.post('/signin', async (req, res) => {
+    const { email, password } = req.body;
+    if (!email || !password) {
+        return res.status(422).json({ "error": "please add email or password" });
+    }
+
+    try {
+        console.log(email);
+        const savedUser = await User.findOne({ email: email });
+        if (!savedUser) {
+            return res.status(422).json({ "error": "Invalid email or password1" });
+        }
+
+        doMatch = await bcrypt.compare(password, savedUser.password);
+
+        if (doMatch) {
+            res.json({ message: "succesfully signed in" });
+        } else {
+            return res.status(422).json({ "error": "Invalid email or password2" });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+
+})
 module.exports = router;
