@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const router = Router();
-const mongoose = require("mongoose");
+//const mongoose = require("mongoose");
 const requireLogin = require('../middlewares/requireLogin');
 
 const { signInUser, signUpUser, accesToProtected } = require('../controllers/users.controllers');
@@ -20,8 +20,5 @@ router.get('/protected',requireLogin, (req, res) => {
     res.send('Hello user');
 });
 
-/*
-router.route('/protected').
-    get(accesToProtected,requireLogin);*/
 
 module.exports = router;

@@ -17,11 +17,10 @@ app.use(express.json());
 
 //Routes
 app.use(require('./routes/auth'));
+app.use(require('./routes/post'));
 
 
-app.get('/about',(req, res)=>{
-    res.send('about');
-});
+
 
 
 //Server
