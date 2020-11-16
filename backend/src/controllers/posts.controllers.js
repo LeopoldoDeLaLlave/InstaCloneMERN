@@ -32,13 +32,24 @@ postCtrl.createPost = async (req, res) => {
 postCtrl.getAllPost = async (req, res) => {
 
     try {
-        const posts = await Post.find().populate("postedBy", "_id name");;
+        const posts = await Post.find().populate("postedBy", "_id name");
         res.json({ posts });
     } catch (error) {
         console.log("error");
     }
 
 };
+
+//Obtiene todos los posts de un usuario concreto
+postCtrl.getUsersPosts = async (req, res)=>{
+
+    try {
+        const myPosts = await Post.find({postedBy:req.user._id}).populate("postedBy", "_id name");
+        res.json({myPosts});
+    } catch (error) {
+        
+    }
+}
 
 
 module.exports = postCtrl;
