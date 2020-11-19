@@ -51,7 +51,6 @@ userCtrl.signInUser = async (req, res) => {
     }
 
     try {
-        console.log(email);
         const savedUser = await User.findOne({ email: email });
         if (!savedUser) {
             return res.status(422).json({ "error": "Invalid email or password" });
