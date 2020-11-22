@@ -33,7 +33,7 @@ userCtrl.signUpUser = async (req, res) => {
         try {
             await user.save();
 
-            res.json({ "message": "saved user" });
+            res.json({ "message": "saved succesfully" });
         } catch (error) {
             console.log(error);
         }
