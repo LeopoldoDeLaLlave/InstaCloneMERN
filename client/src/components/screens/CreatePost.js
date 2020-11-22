@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import materialize from 'materialize-css';
 
@@ -12,6 +12,32 @@ const CreatePost = (e) => {
     const [image, setImage] = useState("");
     const [photo, setPhoto] = useState("");
 
+    useEffect(() => {
+        if (photo) {
+            const newPost = {
+                title,
+                body,
+                photo
+            };
+
+            axios.post('http://localhost:5000/createpost', newPost, {
+                headers: {
+                    //le quitamos las comillas al token
+                    'Authorization': "Bearer " + localStorage.getItem("jwt").slice(1, -1)
+                },
+            }).then((response) => {
+                materialize.toast({ html: "Created post", classes: "##69f0ae green accent-2" });
+                history.push('/');
+            }, (error) => {
+                console.log(error.response);
+                materialize.toast({ html: error.response.data.error, classes: "#b71c1c red darken-4" });
+
+            });
+        }
+    }, [photo]);
+
+
+
     const postDetails = (e) => {
         e.preventDefault();
         const data = new FormData();
@@ -19,24 +45,16 @@ const CreatePost = (e) => {
         data.append("upload_preset", "insta-clone");
         data.append("cloud_name", "dniykkyhc");
 
+
+
         axios.post('https://api.cloudinary.com/v1_1/dniykkyhc/image/upload', data).then((response) => {
             setPhoto(response.data.url);
         }, (error) => {
             console.log(error);
         });;
 
-        const newPost = {
-            title,
-            body,
-            photo
-        };
-        axios.post('http://localhost:5000/createpost', newPost).then((response) => {
-            materialize.toast({ html: "Created post", classes: "##69f0ae green accent-2" });
-            history.push('/');
-        }, (error) => {
-            materialize.toast({ html: error.response.data.error, classes: "#b71c1c red darken-4" });
 
-        });;
+
     }
     return (
         <div className="card input-file" style={{
@@ -51,16 +69,16 @@ const CreatePost = (e) => {
                     placeholder="Title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    required/>
+                    required />
                 <input type="text"
                     placeholder="Body"
                     value={body}
                     onChange={(e) => setBody(e.target.value)}
-                required/>
+                    required />
                 <div className="file-field input-field">
                     <div className="btn #64b5f6 blue darken-1">
                         <span>Upload photo</span>
-                        <input type="file" onChange={(e) => setImage(e.target.files[0])} required/>
+                        <input type="file" onChange={(e) => setImage(e.target.files[0])} required />
                     </div>
                     <div className="file-path-wrapper">
                         <input className="file-path validate" type="text" />
@@ -70,6 +88,7 @@ const CreatePost = (e) => {
             </form>
 
         </div>
+
     )
 }
 
