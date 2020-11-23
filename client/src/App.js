@@ -23,7 +23,7 @@ const Routing = () => {
       dispatch({type:"USER", payload:user});
       history.push('/');
     }else{
-      history.push('/singin');
+      history.push('/signin');
     }
   }, []);
 
