@@ -12,6 +12,8 @@ const CreatePost = (e) => {
     const [image, setImage] = useState("");
     const [photo, setPhoto] = useState("");
 
+
+    //Cuando se produce un cambio en foto se ejecuta este código
     useEffect(() => {
         if (photo) {
             const newPost = {
@@ -38,6 +40,7 @@ const CreatePost = (e) => {
 
 
 
+    //Subimos la foto a cloudinary y guardamos la url en el estado
     const postDetails = (e) => {
         e.preventDefault();
         const data = new FormData();
@@ -84,9 +87,8 @@ const CreatePost = (e) => {
                         <input className="file-path validate" type="text" />
                     </div>
                 </div>
-                <button className="btn waves-effect waves-light #64b5f6 blue darken-1" >Submit post </button>
+                <button className="btn waves-effect waves-light #64b5f6 blue darken-1" id="btnPost">Submit post </button>
             </form>
-
         </div>
 
     )

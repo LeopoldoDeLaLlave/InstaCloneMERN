@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import {UserContext} from '../../App';
 import axios from 'axios';
 import materialize from 'materialize-css';
 
 const Signin = () => {
+
+    const {state,dispatch} = useContext(UserContext);
 
     const history = useHistory();
 
@@ -18,6 +21,7 @@ const Signin = () => {
         axios.post('http://localhost:5000/signin', newUser ).then((response) => {
             localStorage.setItem("jwt", JSON.stringify(response.data.token));
             localStorage.setItem("user", JSON.stringify(response.data.user));
+            dispatch({type:"USER",payload:response.data.user});
             materialize.toast({ html: "Signedin Succes", classes: "##69f0ae green accent-2" });
             history.push('/');
         }, (error) => {
