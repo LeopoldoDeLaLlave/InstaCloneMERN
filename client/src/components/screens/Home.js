@@ -1,35 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const Home = () => {
 
+    const [data, setData] = useState([]);
+
+    useEffect( () => {
+
+        const fetchData = async () => {
+            const result = await axios.get('http://localhost:5000/allpost', {
+                headers: {
+                    //le quitamos las comillas al token
+                    'Authorization': "Bearer " + localStorage.getItem("jwt").slice(1, -1)
+                },
+            })
+
+            setData(result.data.posts);
+        }
+
+        fetchData();
+    }, [])
+
     return (
         <div className="home">
-            <div className="card home-card">
-                <h5>Javier</h5>
-                <div className="card-image">
-                    <img src="https://images.unsplash.com/photo-1571458837028-f73e8bce31df?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1189&q=80" />
+            {
+                data.map(item => {
+                    return (
+                        <div className="card home-card" key={item._id}>
+                            <h5>{item.postedBy.name}</h5>
+                            <div className="card-image">
+                                <img src={item.photo} alt={"postedBy:"+item.postedBy.name + item.title}/>
 
-                </div>
-                <div className="card-content">
-                    <i className="material-icons" style={{color:"red"}}>favorite</i>
-                    <h6>title</h6>
-                    <p>This is my amazing post</p>
-                    <input type="text" placeholder="Add a comment" />
-                </div>
-            </div>
-            <div className="card home-card">
-                <h5>Javier</h5>
-                <div className="card-image">
-                    <img src="https://images.unsplash.com/photo-1571458837028-f73e8bce31df?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1189&q=80" />
+                            </div>
+                            <div className="card-content">
+                                <i className="material-icons" style={{ color: "red" }}>favorite</i>
+                                <h6>{item.title}</h6>
+                                <p>{item.body}</p>
+                                <input type="text" placeholder="Add a comment" />
+                            </div>
+                        </div>
+                    )
+                })
+            }
 
-                </div>
-                <div className="card-content">
-                    <i className="material-icons" style={{color:"red"}}>favorite</i>
-                    <h6>title</h6>
-                    <p>This is my amazing post</p>
-                    <input type="text" placeholder="Add a comment" />
-                </div>
-            </div>
 
         </div>
     );

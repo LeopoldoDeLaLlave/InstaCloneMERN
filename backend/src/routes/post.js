@@ -7,8 +7,7 @@ const {createPost, getAllPost, getUsersPosts} = require('../controllers/posts.co
 
 router.post('/createpost', requireLogin, createPost);
 
-router.route('/allpost')
-    .get(getAllPost);
+router.get('/allpost', requireLogin, getAllPost);
 
 
 router.get('/mypost', requireLogin, getUsersPosts);

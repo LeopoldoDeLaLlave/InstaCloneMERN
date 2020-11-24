@@ -17,6 +17,8 @@ const Routing = () => {
   const history = useHistory();
   const {state, dispatch} = useContext(UserContext);
   
+  //Al cargar la App, si hay una sesión abierta se guarda el usuario
+  //En el UserContext y se envía al tl, si no, se envía al login
   useEffect(()=>{
     const user = JSON.parse(localStorage.getItem("user"));
     if(user){
@@ -53,6 +55,9 @@ function App() {
 
   const [state, dispatch] = useReducer(reducer, initialState);
   return (
+    //Todos los nodos hijos de app tiene acceso al contexton con state
+    //Acceen a los valores(algo similar a un getter) y con dispatch
+    //pueden cambiar esos valore(algo similar a un setter)
     <UserContext.Provider value={{state, dispatch}}>
       <BrowserRouter>
         <NavBar />

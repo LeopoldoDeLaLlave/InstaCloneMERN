@@ -21,6 +21,7 @@ const Signin = () => {
         axios.post('http://localhost:5000/signin', newUser ).then((response) => {
             localStorage.setItem("jwt", JSON.stringify(response.data.token));
             localStorage.setItem("user", JSON.stringify(response.data.user));
+            //Al hacer login ponemos en el context el usuario
             dispatch({type:"USER",payload:response.data.user});
             materialize.toast({ html: "Signedin Succes", classes: "##69f0ae green accent-2" });
             history.push('/');
