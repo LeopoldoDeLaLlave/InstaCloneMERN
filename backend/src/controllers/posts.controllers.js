@@ -54,5 +54,46 @@ postCtrl.getUsersPosts = async (req, res)=>{
     }
 }
 
+postCtrl.putLike = (req, res)=>{
+    
+    try {
+        Post.findByIdAndUpdate(req.body.postID,{
+            $push:{likes:req.user._Id}
+        },{
+            new:true
+        }).exec((err, result)=>{
+            if(err){
+                return res.status(422).json({error:err})
+            }else{
+                res.json(result)
+            }
+        });
+       
+        
+    } catch (error) {
+        return res.status(422).json({error:err})
+    }
+}
+
+postCtrl.putUnlike = (req, res)=>{
+    
+    try {
+        Post.findByIdAndUpdate(req.body.postID,{
+            $pull:{likes:req.user._Id}
+        },{
+            new:true
+        }).exec((err, result)=>{
+            if(err){
+                return res.status(422).json({error:err})
+            }else{
+                res.json(result)
+            }
+        });
+       
+        
+    } catch (error) {
+        return res.status(422).json({error:err})
+    }
+}
 
 module.exports = postCtrl;
