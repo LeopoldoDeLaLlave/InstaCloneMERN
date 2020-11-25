@@ -23,7 +23,7 @@ a{
   box-shadow: 0 1px 0 0 rgb(79, 189, 240) !important;
 }
 
-#gallery{
+.gallery{
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
