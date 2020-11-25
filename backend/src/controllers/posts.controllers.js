@@ -43,10 +43,12 @@ postCtrl.getAllPost = async (req, res) => {
 
 //Obtiene todos los posts de un usuario concreto
 postCtrl.getUsersPosts = async (req, res)=>{
-
+    
     try {
+        
         const myPosts = await Post.find({postedBy:req.user._id}).populate("postedBy", "_id name");
         res.json({myPosts});
+        
     } catch (error) {
         
     }
