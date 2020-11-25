@@ -42,58 +42,62 @@ postCtrl.getAllPost = async (req, res) => {
 };
 
 //Obtiene todos los posts de un usuario concreto
-postCtrl.getUsersPosts = async (req, res)=>{
-    
+postCtrl.getUsersPosts = async (req, res) => {
+
     try {
-        
-        const myPosts = await Post.find({postedBy:req.user._id}).populate("postedBy", "_id name");
-        res.json({myPosts});
-        
+
+        const myPosts = await Post.find({ postedBy: req.user._id }).populate("postedBy", "_id name");
+        res.json({ myPosts });
+
     } catch (error) {
-        
+
     }
 }
 
-postCtrl.putLike = (req, res)=>{
-    
+postCtrl.putLike = (req, res) => {
+
     try {
-        Post.findByIdAndUpdate(req.body.postID,{
-            $push:{likes:req.user._Id}
-        },{
-            new:true
-        }).exec((err, result)=>{
-            if(err){
-                return res.status(422).json({error:err})
-            }else{
+        Post.findByIdAndUpdate(req.body.postId, {
+            $push: { likes: req.user._id }
+        }, {
+            new: true
+        }).exec((err, result) => {
+            if (err) {
+                return res.status(422).json({ error: err })
+            } else {
+                
                 res.json(result)
             }
-        });
-       
-        
+        })
+
+
     } catch (error) {
-        return res.status(422).json({error:err})
+        return res.status(422).json({ error: err })
     }
 }
 
-postCtrl.putUnlike = (req, res)=>{
+
+//Comprueba si el usuario que está dando like ya ha dado like
+postCtrl.checkLikes = async(req, res) => {
+
     
     try {
-        Post.findByIdAndUpdate(req.body.postID,{
-            $pull:{likes:req.user._Id}
-        },{
-            new:true
-        }).exec((err, result)=>{
-            if(err){
-                return res.status(422).json({error:err})
-            }else{
-                res.json(result)
-            }
-        });
-       
+        const myPost = await Post.findById(req.body.postId);
+
+
+        if(myPost.likes.find(element => JSON.stringify(element) == JSON.stringify(req.user._id))){
+            res.json({presente:true});
+        }else{
+            res.json({presente:false});
+        }
         
-    } catch (error) {
-        return res.status(422).json({error:err})
+
+
+    } catch (err) {
+        return res.status(422).json({ error: err })
     }
 }
+
+
 
 module.exports = postCtrl;
