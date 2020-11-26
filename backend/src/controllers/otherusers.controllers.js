@@ -10,8 +10,8 @@ otheruserCtrl.getUser = async (req, res) => {
 
 
     try {
-        const user = await User.findOne({_id:req.param.id}).select("-password");
-        Post.find({postedBy:req.param.id})
+        const user = await User.findOne({_id:req.params.id}).select("-password");
+        Post.find({postedBy:req.params.id})
         .populate("postedBy", "_id name")
         .exec((error, posts)=>{
             if(error){
