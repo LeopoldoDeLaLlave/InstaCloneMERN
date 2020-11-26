@@ -8,7 +8,8 @@ const { createPost,
     putLike,
     checkLikes,
     putUnlike,
-    putComment } = require('../controllers/posts.controllers');
+    putComment,
+    deletePost} = require('../controllers/posts.controllers');
 
 
 router.post('/createpost', requireLogin, createPost);
@@ -25,6 +26,8 @@ router.put('/unlike', requireLogin, putUnlike);
 router.put('/checklikes', requireLogin, checkLikes);
 
 router.put('/comment', requireLogin, putComment);
+
+router.delete('/deletepost/:postid', requireLogin, deletePost);
 
 
 

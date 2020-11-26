@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import {UserContext} from '../../App';
 import axios from 'axios';
 
 const Home = () => {
 
     const [data, setData] = useState([]);
+    const {state,dispatch} = useContext(UserContext);
 
-    useEffect(() => {
+    useEffect(() => { 
 
         const fetchData = async () => {
             const result = await axios.get('http://localhost:5000/allpost', {
@@ -99,7 +101,22 @@ const Home = () => {
         )
 
         setData(newData);
+
+    }
+
+
+    const deletePost = async (postid) => {
         
+        const result = await axios.delete(`http://localhost:5000/deletepost/${postid}`, {
+            headers: {
+                //le quitamos las comillas al token
+                'Authorization': "Bearer " + localStorage.getItem("jwt").slice(1, -1)
+            },
+        });
+        const newData = data.filter(item=>{
+            return item._id != result.data._id
+        })
+        setData(newData);
     }
 
     return (
@@ -108,7 +125,13 @@ const Home = () => {
                 data.map(item => {
                     return (
                         <div className="card home-card" key={item._id}>
-                            <h5>{item.postedBy.name}</h5>
+                            <h5>{item.postedBy.name} {item.postedBy._id == state._id
+                                && <i className="material-icons" style={{
+                                    float: "right"
+                                }}
+                                onClick={()=>deletePost(item._id)}
+                                >delete</i>
+                            }</h5>
                             <div className="card-image">
                                 <img src={item.photo} alt={"postedBy:" + item.postedBy.name + item.title} />
 
@@ -121,9 +144,9 @@ const Home = () => {
                                 <h6>{item.title}</h6>
                                 <p>{item.body}</p>
                                 {
-                                    item.comments.map(record=>{
-                                        return(
-                                        <h6 key={record._id}><span style={{fontWeight:"500"}}>{record.postedBy.name}</span>:{record.text}</h6>
+                                    item.comments.map(record => {
+                                        return (
+                                            <h6 key={record._id}><span style={{ fontWeight: "500" }}>{record.postedBy.name}</span>:{record.text}</h6>
                                         )
                                     }
 
@@ -131,14 +154,14 @@ const Home = () => {
                                 }
                                 <form onSubmit={(e) => {
                                     e.preventDefault();
-                                    
+
                                     //Para comentar hay que escribir algo
-                                    if(e.target[0].value.length>0){
+                                    if (e.target[0].value.length > 0) {
                                         makeComment(e.target[0].value, item._id);
                                         //Vacíamos la caja de comentarios
                                         e.target[0].value = "";
                                     }
-                                    
+
                                 }}>
                                     <input type="text" placeholder="Add a comment" />
                                     <button className="btn waves-effect waves-light #64b5f6 blue darken-1">

@@ -152,9 +152,32 @@ postCtrl.putComment = (req, res) => {
 
 
     } catch (error) {
-        return res.status(422).json({ error: err })
+        console.log(error);
     }
 }
 
+
+//Borra un post
+postCtrl.deletePost = async (req, res) => {
+
+    try {
+        Post.findOne({_id:req.params.postid}).
+        populate("postedBy","_id")
+        .exec(async(err, post)=>{
+            if(err || !post){
+                return res.status(422).json({ error: err })
+            }
+
+            if(post.postedBy._id.toString() === req.user._id.toString()){
+                const result = await post.remove();
+                res.json(result)
+            }
+        });
+        
+
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 module.exports = postCtrl;
