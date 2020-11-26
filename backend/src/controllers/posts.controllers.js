@@ -65,6 +65,7 @@ postCtrl.putLike = (req, res) => {
         }, {
             new: true
         }).populate("postedBy", "_id name")
+        .populate("comments.postedBy", "_id name")
             .exec((err, result) => {
                 if (err) {
                     return res.status(422).json({ error: err })
@@ -89,6 +90,7 @@ postCtrl.putUnlike = (req, res) => {
         }, {
             new: true
         }).populate("postedBy", "_id name")
+        .populate("comments.postedBy", "_id name")
             .exec((err, result) => {
                 if (err) {
                     return res.status(422).json({ error: err })
