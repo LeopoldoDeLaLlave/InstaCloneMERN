@@ -27,13 +27,14 @@ const Home = () => {
         const postInfo = { postId: id }
 
 
+        //Nos devuelve un objeto indicando si ese usuario ya ha dado like a la foto
         const presente = await axios.put('http://localhost:5000/checklikes', postInfo, {
             headers: {
                 //le quitamos las comillas al token
                 'Authorization': "Bearer " + localStorage.getItem("jwt").slice(1, -1)
             },
         });
-        //Solo le puede dar like si no le ha dado like algún
+        //Si el usuario no ha dado like al pulsar le da like, si ya le ha dado like le da dislike
         if (!presente.data.presente) {
             const result = await axios.put('http://localhost:5000/like', postInfo, {
                 headers: {
@@ -41,17 +42,36 @@ const Home = () => {
                     'Authorization': "Bearer " + localStorage.getItem("jwt").slice(1, -1)
                 },
             });
-            const newData = data.map(item=>{
+            const newData = data.map(item => {
 
-                if(item._id==result.data._id){
+                if (item._id == result.data._id) {
                     return result.data;
-                }else{
+                } else {
                     return item;
                 }
-            }  
+            }
             )
             setData(newData);
+        } else {
+            const unlikeResult = await axios.put('http://localhost:5000/unlike', postInfo, {
+                headers: {
+                    //le quitamos las comillas al token
+                    'Authorization': "Bearer " + localStorage.getItem("jwt").slice(1, -1)
+                },
+            });
+            const newData = data.map(item => {
+
+                if (item._id == unlikeResult.data._id) {
+                    return unlikeResult.data;
+                } else {
+                    return item;
+                }
+            }
+            )
+            setData(newData);
+            
         }
+
 
 
     }
@@ -70,10 +90,9 @@ const Home = () => {
 
                             </div>
                             <div className="card-content">
-                                <i className="material-icons" style={{ color: "red" }}>favorite</i>
-                                <i className="material-icons"
-                                    onClick={() => likePost(item._id)}
-                                >thumb_up</i>
+                                <i className="material-icons" 
+                                style={{ color: "red" ,cursor: "pointer"}}
+                                onClick={() => likePost(item._id)}>favorite</i>
                                 <h6>{item.likes.length} likes</h6>
                                 <h6>{item.title}</h6>
                                 <p>{item.body}</p>

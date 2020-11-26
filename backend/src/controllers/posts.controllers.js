@@ -54,11 +54,35 @@ postCtrl.getUsersPosts = async (req, res) => {
     }
 }
 
+//Le añade un like a la publicación
 postCtrl.putLike = (req, res) => {
 
     try {
         Post.findByIdAndUpdate(req.body.postId, {
             $push: { likes: req.user._id }
+        }, {
+            new: true
+        }).exec((err, result) => {
+            if (err) {
+                return res.status(422).json({ error: err })
+            } else {
+                
+                res.json(result)
+            }
+        })
+
+
+    } catch (error) {
+        return res.status(422).json({ error: err })
+    }
+}
+
+//Quita like a la publicación
+postCtrl.putUnlike = (req, res) => {
+
+    try {
+        Post.findByIdAndUpdate(req.body.postId, {
+            $pull: { likes: req.user._id }
         }, {
             new: true
         }).exec((err, result) => {
