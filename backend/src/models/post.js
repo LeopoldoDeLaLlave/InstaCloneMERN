@@ -15,6 +15,10 @@ const postSchema = new Schema({
         required: true
     }, 
     likes:[{type:ObjectID,ref:"User"}],
+    comments:[{
+        text:String,
+        postedBy:{type:ObjectID,ref:"User"}
+    }],
     postedBy:{
         type:ObjectID,
         ref:"User"

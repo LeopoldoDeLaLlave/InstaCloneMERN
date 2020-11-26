@@ -62,14 +62,15 @@ postCtrl.putLike = (req, res) => {
             $push: { likes: req.user._id }
         }, {
             new: true
-        }).exec((err, result) => {
-            if (err) {
-                return res.status(422).json({ error: err })
-            } else {
-                
-                res.json(result)
-            }
-        })
+        }).populate("postedBy", "_id name")
+            .exec((err, result) => {
+                if (err) {
+                    return res.status(422).json({ error: err })
+                } else {
+
+                    res.json(result)
+                }
+            })
 
 
     } catch (error) {
@@ -85,14 +86,15 @@ postCtrl.putUnlike = (req, res) => {
             $pull: { likes: req.user._id }
         }, {
             new: true
-        }).exec((err, result) => {
-            if (err) {
-                return res.status(422).json({ error: err })
-            } else {
-                
-                res.json(result)
-            }
-        })
+        }).populate("postedBy", "_id name")
+            .exec((err, result) => {
+                if (err) {
+                    return res.status(422).json({ error: err })
+                } else {
+
+                    res.json(result)
+                }
+            })
 
 
     } catch (error) {
@@ -102,19 +104,19 @@ postCtrl.putUnlike = (req, res) => {
 
 
 //Comprueba si el usuario que está dando like ya ha dado like
-postCtrl.checkLikes = async(req, res) => {
+postCtrl.checkLikes = async (req, res) => {
 
-    
+
     try {
         const myPost = await Post.findById(req.body.postId);
 
 
-        if(myPost.likes.find(element => JSON.stringify(element) == JSON.stringify(req.user._id))){
-            res.json({presente:true});
-        }else{
-            res.json({presente:false});
+        if (myPost.likes.find(element => JSON.stringify(element) == JSON.stringify(req.user._id))) {
+            res.json({ presente: true });
+        } else {
+            res.json({ presente: false });
         }
-        
+
 
 
     } catch (err) {
@@ -122,6 +124,35 @@ postCtrl.checkLikes = async(req, res) => {
     }
 }
 
+
+
+//Añade un comentario a un post
+postCtrl.putComment = (req, res) => {
+
+    const comment = {
+        text: req.body.text,
+        postedBy: req.user._id
+    };
+    try {
+        Post.findByIdAndUpdate(req.body.postId, {
+            $push: { comments: comment }
+        }, {
+            new: true
+        }).populate("comments.postedBy", "_id name")
+            .exec((err, result) => {
+                if (err) {
+                    return res.status(422).json({ error: err })
+                } else {
+
+                    res.json(result)
+                }
+            })
+
+
+    } catch (error) {
+        return res.status(422).json({ error: err })
+    }
+}
 
 
 module.exports = postCtrl;

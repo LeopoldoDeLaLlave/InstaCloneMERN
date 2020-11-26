@@ -16,13 +16,15 @@ const Home = () => {
             })
 
             setData(result.data.posts);
+            
         }
 
         fetchData();
+
+        
     }, [])
 
     const likePost = async (id) => {
-
 
         const postInfo = { postId: id }
 
@@ -71,8 +73,6 @@ const Home = () => {
             setData(newData);
             
         }
-
-
 
     }
 
