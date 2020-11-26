@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react';
-import {UserContext} from '../../App';
+import { UserContext } from '../../App';
 import axios from 'axios';
 
 const Home = () => {
 
+    //Nos indica si la acción de pulsar like está siendo ejecutada en ese momento
+    var pulsado = false;
     const [data, setData] = useState([]);
-    const {state,dispatch} = useContext(UserContext);
+    const { state, dispatch } = useContext(UserContext);
 
-    useEffect(() => { 
+    useEffect(() => {
 
         const fetchData = async () => {
             const result = await axios.get('http://localhost:5000/allpost', {
@@ -27,54 +29,60 @@ const Home = () => {
     }, [])
 
     const likePost = async (id) => {
+        if (!pulsado) {//Solo se ejecuta si no se está ejecuntando la acción
+            console.log("hola");
+            pulsado = true;
+            const postInfo = { postId: id }
 
-        const postInfo = { postId: id }
 
-
-        //Nos devuelve un objeto indicando si ese usuario ya ha dado like a la foto
-        const presente = await axios.put('http://localhost:5000/checklikes', postInfo, {
-            headers: {
-                //le quitamos las comillas al token
-                'Authorization': "Bearer " + localStorage.getItem("jwt").slice(1, -1)
-            },
-        });
-        //Si el usuario no ha dado like al pulsar le da like, si ya le ha dado like le da dislike
-        if (!presente.data.presente) {
-            const result = await axios.put('http://localhost:5000/like', postInfo, {
+            //Nos devuelve un objeto indicando si ese usuario ya ha dado like a la foto
+            const presente = await axios.put('http://localhost:5000/checklikes', postInfo, {
                 headers: {
                     //le quitamos las comillas al token
                     'Authorization': "Bearer " + localStorage.getItem("jwt").slice(1, -1)
                 },
             });
-            const newData = data.map(item => {
+            //Si el usuario no ha dado like al pulsar le da like, si ya le ha dado like le da dislike
+            if (!presente.data.presente) {
+                const result = await axios.put('http://localhost:5000/like', postInfo, {
+                    headers: {
+                        //le quitamos las comillas al token
+                        'Authorization': "Bearer " + localStorage.getItem("jwt").slice(1, -1)
+                    },
+                });
+                const newData = data.map(item => {
 
-                if (item._id == result.data._id) {
-                    return result.data;
-                } else {
-                    return item;
+                    if (item._id == result.data._id) {
+                        return result.data;
+                    } else {
+                        return item;
+                    }
                 }
-            }
-            )
-            setData(newData);
-        } else {
-            const unlikeResult = await axios.put('http://localhost:5000/unlike', postInfo, {
-                headers: {
-                    //le quitamos las comillas al token
-                    'Authorization': "Bearer " + localStorage.getItem("jwt").slice(1, -1)
-                },
-            });
-            const newData = data.map(item => {
+                )
+                setData(newData);
+            } else {
+                const unlikeResult = await axios.put('http://localhost:5000/unlike', postInfo, {
+                    headers: {
+                        //le quitamos las comillas al token
+                        'Authorization': "Bearer " + localStorage.getItem("jwt").slice(1, -1)
+                    },
+                });
+                const newData = data.map(item => {
 
-                if (item._id == unlikeResult.data._id) {
-                    return unlikeResult.data;
-                } else {
-                    return item;
+                    if (item._id == unlikeResult.data._id) {
+                        return unlikeResult.data;
+                    } else {
+                        return item;
+                    }
                 }
-            }
-            )
-            setData(newData);
+                )
+                setData(newData);
 
+            }
+
+            pulsado=false;//Al terminar la cción se puede volver a pulsar
         }
+
 
     }
 
@@ -86,9 +94,6 @@ const Home = () => {
             },
         });
 
-        console.log("hola");
-        console.log(commentResult);
-        console.log("hola");
 
         const newData = data.map(item => {
 
@@ -106,14 +111,14 @@ const Home = () => {
 
 
     const deletePost = async (postid) => {
-        
+
         const result = await axios.delete(`http://localhost:5000/deletepost/${postid}`, {
             headers: {
                 //le quitamos las comillas al token
                 'Authorization': "Bearer " + localStorage.getItem("jwt").slice(1, -1)
             },
         });
-        const newData = data.filter(item=>{
+        const newData = data.filter(item => {
             return item._id != result.data._id
         })
         setData(newData);
@@ -129,7 +134,7 @@ const Home = () => {
                                 && <i className="material-icons" style={{
                                     float: "right"
                                 }}
-                                onClick={()=>deletePost(item._id)}
+                                    onClick={() => deletePost(item._id)}
                                 >delete</i>
                             }</h5>
                             <div className="card-image">

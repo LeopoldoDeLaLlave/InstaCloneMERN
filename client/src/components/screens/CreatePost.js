@@ -3,7 +3,10 @@ import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import materialize from 'materialize-css';
 
-const CreatePost = (e) => {
+const CreatePost = () => {
+
+
+
 
     const history = useHistory();
 
@@ -11,11 +14,16 @@ const CreatePost = (e) => {
     const [body, setBody] = useState("");
     const [image, setImage] = useState("");
     const [photo, setPhoto] = useState("");
+    //Nos indica si la acción de pulsar like está siendo ejecutada en ese momento
+    const [pulsado, setPulsado] = useState(false);
 
 
     //Cuando se produce un cambio en foto se ejecuta este código
     useEffect(() => {
+
+
         if (photo) {
+            
             const newPost = {
                 title,
                 body,
@@ -35,6 +43,7 @@ const CreatePost = (e) => {
                 materialize.toast({ html: error.response.data.error, classes: "#b71c1c red darken-4" });
 
             });
+            //setPulsado(false);
         }
     }, [photo]);
 
@@ -42,19 +51,23 @@ const CreatePost = (e) => {
 
     //Subimos la foto a cloudinary y guardamos la url en el estado
     const postDetails = (e) => {
-        e.preventDefault();
-        const data = new FormData();
-        data.append("file", image);
-        data.append("upload_preset", "insta-clone");
-        data.append("cloud_name", "dniykkyhc");
+        if (!pulsado) {
+            setPulsado(true);
+            e.preventDefault();
+            const data = new FormData();
+            data.append("file", image);
+            data.append("upload_preset", "insta-clone");
+            data.append("cloud_name", "dniykkyhc");
 
 
 
-        axios.post('https://api.cloudinary.com/v1_1/dniykkyhc/image/upload', data).then((response) => {
-            setPhoto(response.data.url);
-        }, (error) => {
-            console.log(error);
-        });;
+            axios.post('https://api.cloudinary.com/v1_1/dniykkyhc/image/upload', data).then((response) => {
+                setPhoto(response.data.url);
+            }, (error) => {
+                console.log(error);
+            });;
+        }
+
 
 
 
