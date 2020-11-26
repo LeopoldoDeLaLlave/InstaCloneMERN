@@ -16,12 +16,12 @@ const Home = () => {
             })
 
             setData(result.data.posts);
-            
+
         }
 
         fetchData();
 
-        
+
     }, [])
 
     const likePost = async (id) => {
@@ -71,12 +71,36 @@ const Home = () => {
             }
             )
             setData(newData);
-            
+
         }
 
     }
 
+    const makeComment = async (text, postID) => {
+        const commentResult = await axios.put('http://localhost:5000/comment', { postID, text }, {
+            headers: {
+                //le quitamos las comillas al token
+                'Authorization': "Bearer " + localStorage.getItem("jwt").slice(1, -1)
+            },
+        });
 
+        console.log("hola");
+        console.log(commentResult);
+        console.log("hola");
+
+        const newData = data.map(item => {
+
+            if (item._id == commentResult.data._id) {
+                return commentResult.data;
+            } else {
+                return item;
+            }
+        }
+        )
+
+        setData(newData);
+        
+    }
 
     return (
         <div className="home">
@@ -90,13 +114,38 @@ const Home = () => {
 
                             </div>
                             <div className="card-content">
-                                <i className="material-icons" 
-                                style={{ color: "red" ,cursor: "pointer"}}
-                                onClick={() => likePost(item._id)}>favorite</i>
+                                <i className="material-icons"
+                                    style={{ color: "red", cursor: "pointer" }}
+                                    onClick={() => likePost(item._id)}>favorite</i>
                                 <h6>{item.likes.length} likes</h6>
                                 <h6>{item.title}</h6>
                                 <p>{item.body}</p>
-                                <input type="text" placeholder="Add a comment" />
+                                {
+                                    item.comments.map(record=>{
+                                        return(
+                                        <h6 key={record._id}><span style={{fontWeight:"500"}}>{record.postedBy.name}</span>:{record.text}</h6>
+                                        )
+                                    }
+
+                                    )
+                                }
+                                <form onSubmit={(e) => {
+                                    e.preventDefault();
+                                    
+                                    //Para comentar hay que escribir algo
+                                    if(e.target[0].value.length>0){
+                                        makeComment(e.target[0].value, item._id);
+                                        //Vacíamos la caja de comentarios
+                                        e.target[0].value = "";
+                                    }
+                                    
+                                }}>
+                                    <input type="text" placeholder="Add a comment" />
+                                    <button className="btn waves-effect waves-light #64b5f6 blue darken-1">
+                                        Comment
+                                    </button>
+                                </form>
+
                             </div>
                         </div>
                     )

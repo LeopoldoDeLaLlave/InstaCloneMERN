@@ -33,7 +33,9 @@ postCtrl.createPost = async (req, res) => {
 postCtrl.getAllPost = async (req, res) => {
 
     try {
-        const posts = await Post.find().populate("postedBy", "_id name");
+        const posts = await Post.find()
+        .populate("postedBy", "_id name")
+        .populate("comments.postedBy","_id name");
         res.json({ posts });
     } catch (error) {
         console.log("error");
@@ -134,16 +136,16 @@ postCtrl.putComment = (req, res) => {
         postedBy: req.user._id
     };
     try {
-        Post.findByIdAndUpdate(req.body.postId, {
+        Post.findByIdAndUpdate(req.body.postID, {
             $push: { comments: comment }
         }, {
             new: true
         }).populate("comments.postedBy", "_id name")
+        .populate("postedBy", "_id name")
             .exec((err, result) => {
                 if (err) {
                     return res.status(422).json({ error: err })
                 } else {
-
                     res.json(result)
                 }
             })
