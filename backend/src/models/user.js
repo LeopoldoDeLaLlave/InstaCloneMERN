@@ -1,4 +1,6 @@
 const {Schema, model} = require('mongoose');
+const {ObjectID}=Schema.Types;
+
 
 const userSchema = new Schema({
     name:{
@@ -14,7 +16,9 @@ const userSchema = new Schema({
     password:{
         type: String,
         required: true
-    }
+    },
+    followers:[{type:ObjectID, ref:"User"}],
+    following:[{type:ObjectID, ref:"User"}]
 
 });
 
