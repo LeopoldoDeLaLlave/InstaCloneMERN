@@ -25,6 +25,27 @@ const UserProfile = () => {
 
         fetch();
     }, [])
+
+    const followUser = async () => {
+        const result = await axios.put(`http://localhost:5000/follow`, { followId: userid }, {
+            headers: {
+                //le quitamos las comillas al token
+                'Authorization': "Bearer " + localStorage.getItem("jwt").slice(1, -1)
+            },
+        });
+
+
+        dispatch({type:"UPDATE",payload:{following:result.data.result.following, followers:result.data.result.followers}});   
+        localStorage.setItem("User", JSON.stringify());
+        /*
+        setUserProfile((prevState)=>{
+            return{
+                ...prevState,
+                user:result.data.result
+            }
+        });
+        */
+    }
     return (
         <>
             {userProfile ?
@@ -47,8 +68,12 @@ const UserProfile = () => {
                                 width: "108%"
                             }}>
                                 <h6>{userProfile.posts.length} posts</h6>
-                                <h6>40 followers</h6>
-                                <h6>40 following</h6>
+                                <h6>{userProfile.user.followers.length} followers</h6>
+                                <h6>{userProfile.user.following.length} following</h6>
+                                <button className="btn waves-effect waves-light #64b5f6 blue darken-1"
+                                onClick={()=>followUser()}>
+                                    Follow
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -65,7 +90,7 @@ const UserProfile = () => {
                     </div>
                 </div>
                 : <h2>loading...</h2>
-            }           
+            }
         </>
     );
 };

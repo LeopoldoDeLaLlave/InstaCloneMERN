@@ -33,7 +33,7 @@ otheruserCtrl.putFollow = (req, res) => {
 
 
     try {
-        User.findByIdAndUpdate(req.body.followID,{
+        User.findByIdAndUpdate(req.body.followId,{
             $push:{followers:req.user._id}
         }, {
             new:true
@@ -42,10 +42,10 @@ otheruserCtrl.putFollow = (req, res) => {
                 return res.status(422).json({error:err})
             }
             const followingResult = await User.findByIdAndUpdate(req.user._id,{
-                $push:{following:req.body.followID}
+                $push:{following:req.body.followId}
             }, {
                 new:true
-            });
+            }).select("-password");
             res.json({result:followingResult})
         });
 
@@ -62,9 +62,10 @@ otheruserCtrl.putFollow = (req, res) => {
 //Da unfollow a otro usuario
 otheruserCtrl.putUnfollow = (req, res) => {
 
+    
 
     try {
-        User.findByIdAndUpdate(req.body.unfollowID,{
+        User.findByIdAndUpdate(req.body.unfollowId,{
             $pull:{followers:req.user._id}
         }, {
             new:true
@@ -73,11 +74,11 @@ otheruserCtrl.putUnfollow = (req, res) => {
                 return res.status(422).json({error:err})
             }
             const unfollowingResult = await User.findByIdAndUpdate(req.user._id,{
-                $pull:{following:req.body.unfollowID}
+                $pull:{following:req.body.unfollowId}
             }, {
                 new:true
-            });
-            res.json({result:unfollowingResult})
+            }).select("-password");
+            res.json({unfollowingResult})
         });
 
         
