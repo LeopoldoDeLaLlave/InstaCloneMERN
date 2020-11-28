@@ -78,7 +78,7 @@ otheruserCtrl.putUnfollow = (req, res) => {
             }, {
                 new:true
             }).select("-password");
-            res.json({unfollowingResult})
+            res.json({result:unfollowingResult})
         });
 
         
