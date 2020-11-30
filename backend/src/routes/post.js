@@ -9,12 +9,15 @@ const { createPost,
     checkLikes,
     putUnlike,
     putComment,
-    deletePost} = require('../controllers/posts.controllers');
+    deletePost,
+    getSubPost } = require('../controllers/posts.controllers');
 
 
 router.post('/createpost', requireLogin, createPost);
 
 router.get('/allpost', requireLogin, getAllPost);
+
+router.get('/getsubpost', requireLogin, getSubPost);
 
 
 router.get('/mypost', requireLogin, getUsersPosts);

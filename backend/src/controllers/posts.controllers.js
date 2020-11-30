@@ -43,6 +43,20 @@ postCtrl.getAllPost = async (req, res) => {
 
 };
 
+
+postCtrl.getSubPost = async (req, res) => {
+
+    try {
+        const posts = await Post.find({postedBy:{$in:req.user.following}})
+        .populate("postedBy", "_id name")
+        .populate("comments.postedBy","_id name");
+        res.json({ posts });
+    } catch (error) {
+        console.log("error");
+    }
+
+};
+
 //Obtiene todos los posts de un usuario concreto
 postCtrl.getUsersPosts = async (req, res) => {
 
