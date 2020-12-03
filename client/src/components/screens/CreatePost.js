@@ -67,11 +67,9 @@ const CreatePost = () => {
                 console.log(error);
             });;
         }
-
-
-
-
     }
+
+    
     return (
         <div className="card input-file" style={{
             margin: "30px auto",

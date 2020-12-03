@@ -51,7 +51,7 @@ const Signin = () => {
                 </form>
 
                 <h5>
-                    <Link to="/signup">Already have an account?</Link>
+                    <Link to="/signup">Don't have an account?</Link>
                 </h5>
             </div>
         </div>

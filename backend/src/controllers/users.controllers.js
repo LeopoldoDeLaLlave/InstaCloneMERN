@@ -6,7 +6,7 @@ const User = require('../models/user');
 
 //Crear nuevos usuarios
 userCtrl.signUpUser = async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, pic} = req.body;
 
     //Comprobamos que hay aintroducido todos los datos
     if (!name || !email || !password) {
@@ -27,7 +27,8 @@ userCtrl.signUpUser = async (req, res) => {
         const user = new User({
             name,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            pic
         });
 
         try {
@@ -60,8 +61,8 @@ userCtrl.signInUser = async (req, res) => {
 
         if (doMatch) {
             const token = jwt.sign({id:savedUser._id}, process.env.JSW_SECRET);
-            const {_id, name, email, followers, following} = savedUser;
-            res.json({token, user:{_id, name, email, followers, following}});
+            const {_id, name, email, followers, following, pic} = savedUser;
+            res.json({token, user:{_id, name, email, followers, following, pic}});
         } else {
             return res.status(422).json({ "error": "Invalid email or password" });
         }

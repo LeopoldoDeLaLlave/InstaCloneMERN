@@ -32,7 +32,8 @@ const Profile = () => {
                 borderBottom: "1px solid grey"
             }}>
                 <div>
-                    <img style={{ width: "160px", height: "160px", borderRadius: "80px" }} src="https://images.unsplash.com/photo-1569466896818-335b1bedfcce?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=80" />
+                    <img style={{ width: "160px", height: "160px", borderRadius: "80px" }} 
+                    src={state?state.pic:"loading..."} />
 
                 </div>
                 <div>
