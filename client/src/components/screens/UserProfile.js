@@ -64,7 +64,7 @@ const UserProfile = () => {
             headers: {
                 //le quitamos las comillas al token
                 'Authorization': "Bearer " + localStorage.getItem("jwt").slice(1, -1)
-            },
+            }
         });
 
 

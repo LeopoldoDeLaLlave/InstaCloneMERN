@@ -8,7 +8,6 @@ const Profile = () => {
     const [myPics, setMyPics] = useState([]);
     const { state, dispatch } = useContext(UserContext);
     const [profileImage, setProfileImage] = useState("");
-    const [url, setUrl] = useState("");
 
     useEffect(() => {
 
@@ -37,10 +36,17 @@ const Profile = () => {
 
 
             axios.post('https://api.cloudinary.com/v1_1/dniykkyhc/image/upload', data).then((response) => {
-                setUrl(response.data.url);
-                console.log(response.data);
-                localStorage.setItem("user", JSON.stringify({...state,pic:response.data.url}));
-                dispatch({type:"UPDATEPIC", payload:response.data.url});
+                //setUrl(response.data.url);
+                axios.put('http://localhost:5000/updatepic', { pic: response.data.url }, {
+                    headers: {
+                        //le quitamos las comillas al token
+                        'Authorization': "Bearer " + localStorage.getItem("jwt").slice(1, -1)
+                    }
+                }).then((res) => {
+                    localStorage.setItem("user", JSON.stringify({ ...state, pic: res.data.pic }));
+                    dispatch({ type: "UPDATEPIC", payload: res.data.pic });
+                    window.location.reload();
+                })
             }, (error) => {
                 console.log(error);
             });
