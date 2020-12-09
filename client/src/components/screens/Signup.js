@@ -66,7 +66,7 @@ const Signup = () => {
             setUrl(response.data.url);
         }, (error) => {
             console.log(error);
-        });;
+        });
 
     }
 
