@@ -9,11 +9,11 @@ const sendGridTransport = require('nodemailer-sendgrid-transport');
 
 //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
 
-// const transporter = nodemailer.createTransport(sendGridTransport({
-//     auth: {
-//         api_key: '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'
-//     }
-// }));
+const transporter = nodemailer.createTransport(sendGridTransport({
+    auth: {
+        api_key: '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'
+    }
+}));
 
 //Crear nuevos usuarios
 userCtrl.signUpUser = async (req, res) => {
@@ -44,12 +44,13 @@ userCtrl.signUpUser = async (req, res) => {
 
         try {
             await user.save(user.email);
-            // transporter.sendMail({
-            //         to:user.email,
-            //         from:"no-reply@insta.com",
-            //         subject:"signup success",
-            //         html:"<h1>welcome to instagram</h1>"
-            //     })
+            console.log(user.email);
+            transporter.sendMail({
+                    to:user.email,
+                    from:"sarzipi@gmail.com",
+                    subject:"signup success",
+                    html:"<h1>welcome to instagram</h1>"
+                })
             res.json({ "message": "saved succesfully" });
         } catch (error) {
             console.log(error);

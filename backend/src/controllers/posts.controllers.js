@@ -2,10 +2,8 @@ const postCtrl = {};
 
 
 const Post = require('../models/post');
-
 //Creamos un post
 postCtrl.createPost = async (req, res) => {
-
     const { title, body, photo } = req.body;
 
     if (!title || !body || !photo) {
@@ -24,6 +22,7 @@ postCtrl.createPost = async (req, res) => {
         const result = await post.save();
         res.json({ post: result });
     } catch (error) {
+        console.log(error);
         res.json({ error });
     }
 
@@ -35,7 +34,8 @@ postCtrl.getAllPost = async (req, res) => {
     try {
         const posts = await Post.find()
         .populate("postedBy", "_id name")
-        .populate("comments.postedBy","_id name");
+        .populate("comments.postedBy","_id name").
+        sort('-createdAt');
         res.json({ posts });
     } catch (error) {
         console.log("error");
@@ -49,7 +49,8 @@ postCtrl.getSubPost = async (req, res) => {
     try {
         const posts = await Post.find({postedBy:{$in:req.user.following}})
         .populate("postedBy", "_id name")
-        .populate("comments.postedBy","_id name");
+        .populate("comments.postedBy","_id name").
+        sort('-createdAt');;
         res.json({ posts });
     } catch (error) {
         console.log("error");

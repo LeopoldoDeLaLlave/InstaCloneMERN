@@ -24,6 +24,6 @@ const postSchema = new Schema({
         ref:"User"
     }
 
-});
+},{timestamps:true});
 
 module.exports = model('Post', postSchema);
