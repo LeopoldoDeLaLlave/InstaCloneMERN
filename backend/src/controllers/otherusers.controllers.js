@@ -12,18 +12,18 @@ otheruserCtrl.getUser = async (req, res) => {
 
 
     try {
-        const user = await User.findOne({_id:req.params.id}).select("-password");
-        Post.find({postedBy:req.params.id})
-        .populate("postedBy", "_id name")
-        .exec((error, posts)=>{
-            if(error){
-                return res.status(422).json({error})
-            }
-            res.json({user, posts});
-        })
+        const user = await User.findOne({ _id: req.params.id }).select("-password");
+        Post.find({ postedBy: req.params.id })
+            .populate("postedBy", "_id name")
+            .exec((error, posts) => {
+                if (error) {
+                    return res.status(422).json({ error })
+                }
+                res.json({ user, posts });
+            })
 
     } catch (error) {
-        return res.status(404).json({error:"User not found"})
+        return res.status(404).json({ error: "User not found" })
     }
 }
 
@@ -33,26 +33,26 @@ otheruserCtrl.putFollow = (req, res) => {
 
 
     try {
-        User.findByIdAndUpdate(req.body.followId,{
-            $push:{followers:req.user._id}
+        User.findByIdAndUpdate(req.body.followId, {
+            $push: { followers: req.user._id }
         }, {
-            new:true
-        },async(err, result)=>{
-            if(err){
-                return res.status(422).json({error:err})
+            new: true
+        }, async (err, result) => {
+            if (err) {
+                return res.status(422).json({ error: err })
             }
-            const followingResult = await User.findByIdAndUpdate(req.user._id,{
-                $push:{following:req.body.followId}
+            const followingResult = await User.findByIdAndUpdate(req.user._id, {
+                $push: { following: req.body.followId }
             }, {
-                new:true
+                new: true
             }).select("-password");
-            res.json({result:followingResult})
+            res.json({ result: followingResult })
         });
 
-        
+
 
     } catch (error) {
-        return res.status(422).json({error})
+        return res.status(422).json({ error })
     }
 }
 
@@ -62,29 +62,48 @@ otheruserCtrl.putFollow = (req, res) => {
 //Da unfollow a otro usuario
 otheruserCtrl.putUnfollow = (req, res) => {
 
-    
+
 
     try {
-        User.findByIdAndUpdate(req.body.unfollowId,{
-            $pull:{followers:req.user._id}
+        User.findByIdAndUpdate(req.body.unfollowId, {
+            $pull: { followers: req.user._id }
         }, {
-            new:true
-        },async(err, result)=>{
-            if(err){
-                return res.status(422).json({error:err})
+            new: true
+        }, async (err, result) => {
+            if (err) {
+                return res.status(422).json({ error: err })
             }
-            const unfollowingResult = await User.findByIdAndUpdate(req.user._id,{
-                $pull:{following:req.body.unfollowId}
+            const unfollowingResult = await User.findByIdAndUpdate(req.user._id, {
+                $pull: { following: req.body.unfollowId }
             }, {
-                new:true
+                new: true
             }).select("-password");
-            res.json({result:unfollowingResult})
+            res.json({ result: unfollowingResult })
         });
 
-        
+
 
     } catch (error) {
-        return res.status(422).json({error})
+        return res.status(422).json({ error })
+    }
+}
+
+
+
+//Busca usuarios
+otheruserCtrl.searchUsers = async(req, res) => {
+
+
+
+    try {
+        let userPattern = new RegExp("^" + req.body.query)
+        const _user = await User.find({ email: { $regex: userPattern } })
+            .select("_id email");
+        
+        res.json({ user: _user })
+
+    } catch (error) {
+        console.log(error)
     }
 }
 
